@@ -13,7 +13,7 @@ const signUp= async(req, res)=>{
 
         const userExist= await User.findOne({email});
         if(userExist){
-            return res.status(409).json({messagee: 'User already exist'});
+            return res.status(409).json({messagee: 'User already exists.'});
         }
 
         const hashedPassword= await bcrypt.hash(password, 10);
@@ -62,6 +62,11 @@ const login= async(req, res)=>{
 const getAllUsers= async(req, res)=>{
     try {
         const users= await User.find({}, '-password');
+
+        if(users.length==0){
+            return res.status(404).json({message: 'Users not found'});
+        }
+
         res.status(200).json({message: 'User fetched successfully', data:users});
         
     } catch (error) {
@@ -130,5 +135,19 @@ const deleteUser= async(req, res)=>{
     }
 }
 
+const getuserById= async(req, res)=>{
+    try {
+        const user= await User.findById(req.user.id);
+        
+        if(!user){
+            return res.status(404).json({message: 'User not found'});
+        }
 
-module.exports= {signUp, login, getAllUsers, updateUser, deleteUser};
+        res.status(200).json({message: 'User fetched successfully', user:user});
+
+    } catch (error) {
+        return res.status(500).json({message: 'Internal server error'});
+    }
+}
+
+module.exports= {signUp, login, getAllUsers, updateUser, deleteUser, getuserById};
