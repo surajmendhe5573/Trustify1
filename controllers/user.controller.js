@@ -78,19 +78,21 @@ const getAllUsers= async(req, res)=>{
 const updateUser= async(req, res)=>{
     try {
         const {name, email, password}= req.body;
-        const {id}= req.params;
+        // const {id}= req.params;
+
+        const userId= req.user.id;
 
         // Ensure the user is updating their own details
-        if (req.user.id !== id) {
-            return res.status(403).json({ message: 'You can only update your own account' });
-        }
+        // if (req.user.id !== req.user.id) {
+        //     return res.status(403).json({ message: 'You can only update your own account' });
+        // }
 
         const updates= {};
 
         if(name) updates.name= name;
         if(email){
             const userExist= await User.findOne({email});
-            if(userExist && userExist._id.toString() !== id){
+            if(userExist && userExist._id.toString() !== userId){
                 return res.status(409).json({message: 'This email is already taken by another user'});
             }
             updates.email= email
@@ -101,7 +103,7 @@ const updateUser= async(req, res)=>{
             updates. password=hashedPassword;
         }
 
-        const updateUser= await User.findByIdAndUpdate(id, updates, {new:true}).select('-password');
+        const updateUser= await User.findByIdAndUpdate(userId, updates, {new:true}).select('-password');
         if(!updateUser){
             return res.status(404).json({message: 'User not found'});
         }
@@ -116,14 +118,15 @@ const updateUser= async(req, res)=>{
 
 const deleteUser= async(req, res)=>{
     try {
-        const {id}= req.params;
+        // const {id}= req.params;
 
         // Ensure the user is deleting their own account
-        if (req.user.id !== id) {
-            return res.status(403).json({ message: 'You can only delete your own account' });
-        }
+        // if (req.user.id !== id) {
+        //     return res.status(403).json({ message: 'You can only delete your own account' });
+        // }
 
-        const deleteUser= await User.findByIdAndDelete(id);
+
+        const deleteUser= await User.findByIdAndDelete(req.user.id);
         if(!deleteUser){
             return res.status(404).json({message: 'User not found'});
         }
