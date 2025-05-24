@@ -153,4 +153,5 @@ const getuserById= async(req, res)=>{
     }
 }
 
+
 module.exports= {signUp, login, getAllUsers, updateUser, deleteUser, getuserById};
