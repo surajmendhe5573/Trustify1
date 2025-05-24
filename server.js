@@ -10,6 +10,10 @@ app.get('/', (req, res)=>{
     res.send('Jai Shree Ram');
 })
 
+app.get('/backend', (req, res)=>{
+    res.send('Welcome to the Backend Development !');
+})
+
 require('./config/db');
 
 app.use('/api/users', require('./routes/user'));
